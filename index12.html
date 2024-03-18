@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yapeaste - Pago de Impuestos Sunat</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #8c2a8f; /* Morado Yape */
+      color: #211f1f; /* Texto negro */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column; /* Cambia la dirección del eje principal para centrar verticalmente */
+    }
+    .container {
+      background-color: #ffffff; /* Fondo blanco */
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Sombra */
+      max-width: 190px; /* Ancho ajustado */
+      width: 100%; /* Asegura que el ancho sea 100% del contenedor padre */
+      text-align: center;
+    }
+    .info {
+      text-align: center;
+    }
+    h1 {
+      color: #6b016e; /* Morado Yape */
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    p:first-child {
+      color: #6a1b9a; /* Morado Yape */
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+    p {
+      margin: 5px 0;
+      font-size: 18px;
+    }
+    .small-text {
+      font-size: 14px;
+      margin-top: 10px;
+      margin-bottom: 5px;
+    }
+    .separator {
+      margin: 4px 0;
+      border-bottom: 1px solid #908597; /* Línea sólida de color morado */
+    }
+    .image-container {
+      max-width: 100%;
+      text-align: center;
+      margin-bottom: 15px; /* Agrega un margen inferior para separar del contenedor */
+    }
+    #nombre {
+      white-space: pre-wrap; /* Permite que el texto se ajuste automáticamente y haga saltos de línea */
+    }
+    /* Cambiar el color de las letras especificadas */
+    .light-text {
+      color: #8e8a91; /* Morado Yape */
+    }
+    .light-prefix {
+      color: #eca3e3; /* Color más claro */
+    }
+
+    /* Estilo para el emoji */
+    #confirmation {
+      font-size: 48px; /* Tamaño del emoji */
+    }
+    /* Estilo para las letras antes de los dos puntos */
+    .light-before-colon {
+      color: #8e8a91; /* Morado Yape */
+    }
+    /* Estilo para las letras después de los dos puntos */
+    .dark-after-colon {
+      color: #211f1f; /* Texto negro */
+    }
+
+    .confeti {
+      width: 8px;
+      height: 16px;
+      background-color: #e74c3c;
+      position: absolute;
+      animation: fall 5s linear infinite;
+    }
+
+    .confeti:nth-child(2n) {
+      background-color: #3498db;
+    }
+
+    .confeti:nth-child(3n) {
+      background-color: #2ecc71;
+    }
+
+    .confeti:nth-child(4n) {
+      background-color: #f1c40f;
+    }
+
+    .confeti:nth-child(5n) {
+      background-color: #9b59b6;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(-100vh) rotateZ(0deg);
+        opacity: 0;
+      }
+      100% {
+        transform: translateY(100vh) rotateZ(720deg);
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="image-container">
+    <!-- Contenido HTML aquí -->
+    <div class="image-container" style="margin-bottom: 45px;">
+      <img src="logodes-fotor-bg-remover-202402263125.png" alt="Imagen" style="max-width: 50px; height: auto;">
+    </div>
+    <div class="container" id="container" style="display:none;">
+      <div class="info">
+        <h1>¡Yapeaste!</h1>
+        <br>
+        <p style="font-size: 32px; color: #6b016e;"><span class="light-prefix">ˢ/</span><span id="monto">20</span></p>
+        <br>
+        <!--<p style="font-size: 17px;" id="nombre"></p> -->
+        <p style="font-size: 17px; font-weight: bold;" id="nombre"></p>
+        <p class="small-text" id="fecha"></p>
+        <br>
+        <div class="separator"></div>
+        <p class="small-text light-before-colon" id="celular">N° de celular: *** *** <span class="dark-after-colon" id="celular-digits"></span></p>
+        <div class="separator"></div>
+        <p class="small-text light-before-colon" id="destino">Destino: <span class="dark-after-colon">Yape</span></p>
+        <div class="separator"></div>
+        <p class="small-text light-before-colon" id="numero-operacion">N° de operación: <span class="dark-after-colon" id="operacion-number"></span></p>
+        <div class="separator"></div>
+      </div>
+    </div>
+  </div>
+  <div class="image-container" style="margin-bottom: 5px;" >
+    <img src="imagen_abajo.png" alt="Imagen" style="max-width: 245px; height: auto;">
+  </div>
+
+  <!-- Confeti -->
+  <div id="confeti-container"></div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const container = document.getElementById('confeti-container');
+      const colors = ['#e74c3c', '#3498db', '#2ecc71', '#f1c40f', '#9b59b6'];
+      const shapes = ['square', 'rectangle', 'triangle'];
+
+      for (let i = 0; i < 100; i++) {
+        const confeti = document.createElement('div');
+        confeti.classList.add('confeti');
+        confeti.style.left = Math.random() * window.innerWidth + 'px';
+        confeti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confeti.style.transform = `rotateZ(${Math.random() * 360}deg)`;
+        confeti.style.animationDelay = Math.random() * 3 + 's';
+        container.appendChild(confeti);
+      }
+
+      setTimeout(function() {
+        container.innerHTML = '';
+      }, 3000);
+    });
+  </script>
+
+  <script>
+    if (document.referrer !== "https://yakpe.000webhostapp.com/disenoInicio.html") {
+        window.location.href = "https://yakpe.000webhostapp.com/";
+    } else {
+      function solicitarDatos() {
+            const celularUltimosTresDigitos = prompt("Por favor, ingresa los últimos 3 dígitos de tu número de celular:");
+            document.getElementById('celular-digits').textContent = celularUltimosTresDigitos;
+
+            let nombre = "";
+            switch(celularUltimosTresDigitos) {
+                case "074":
+                    nombre = "Juan Miguel Rojas Huertas";
+                    break;
+                case "456":
+                    nombre = "Rdy Renzo Reategui Rodriguez";
+                    break;
+                case "132":
+                    nombre = "Rual Ryta";
+                    break;
+                default:
+                    nombre = prompt("Hola soy 2j-19, Por favor, ingresa los nombres y apellidos:");
+                    nombre = nombre.replace(/\b\w/g, char => char.toUpperCase());
+                    break;
+            }
+            document.getElementById('nombre').textContent = nombre;
+
+            const montoPagar = prompt("Por favor, ingresa el monto a pagar:");
+            document.getElementById('monto').textContent = montoPagar;
+
+            const fechaActual = new Date();
+            const options = { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true };
+            const fechaFormateada = fechaActual.toLocaleDateString('es-ES', options).replace(/,/g, ' -');
+            document.getElementById('fecha').textContent = fechaFormateada;
+
+            const numeroOperacion = Math.floor(10000000 + Math.random() * 90000000);
+            document.getElementById('operacion-number').textContent = numeroOperacion;
+
+            document.getElementById('container').style.display = 'block';
+        }
+
+        solicitarDatos();
+
+        setTimeout(function() {
+            var confirmation = document.getElementById('confirmation');
+            confirmation.parentNode.removeChild(confirmation);
+        }, 3000);
+    }
+  </script>
+
+  <div id="confirmation">👨‍🏭jjmv</div>
+</body>
+</html>
